@@ -18,7 +18,6 @@ class CreateRoleMenusTable extends Migration
             $table->unsignedInteger('menu_id');
             $table->foreign('role_id')->references('id')->on('roles');
             $table->foreign('menu_id')->references('id')->on('menus');
-            $table->timestamps();
         });
     }
 

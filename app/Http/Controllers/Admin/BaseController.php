@@ -3,105 +3,155 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Common\ErrorMessage;
+use App\Http\Services\Admin\CommonService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Menu;
-use App\UserRole;
-use App\RoleMenu;
-use App\Http\Common\Tree;
-use Request;
 
 class BaseController extends Controller
 {
-	public function __construct()
+    protected $title = '';
+    protected $indexUrl = '';
+    protected $viewPath = '';
+    protected $curUrl = '';
+    protected $service = null;
+    protected $model = null;
+    protected $powerTypes = [];
+
+	public function __construct(CommonService $service)
     {
         $this->middleware('auth');
-        $this->middleware('log');
+        $this->middleware('power:'.$this->indexUrl);
+        $this->curUrl = url()->current();
+        $this->service = $service;
+        $this->powerTypes = config('power');
+    }
+
+    // 显示
+    public function index(Request $request){
+        if($result = $this->nopower($this->powerTypes['index']['value'])){
+            return $result;
+        }
+        $datas = $this->service->getIndexDatas($request->keyword);
+        return $this->view($this->viewPath.'.index', ['datas'=>$datas]);
+    }
+
+    // 创建
+    public function create(){
+        return $this->_create();
+    }
+
+    public function _create($data=[]){
+        if($result = $this->nopower($this->powerTypes['add']['value'])){
+            return $result;
+        }
+        return $this->view($this->viewPath.'.create', $data);
+    }
+
+    // 存储
+    public function _store($request){
+        if($result = $this->nopower($this->powerTypes['add']['value'])){
+            return $result;
+        }
+        if(false === $this->model->create($request->all())){
+            return $this->error();
+        }
+
+        return $this->success();
+    }
+
+    // 编辑
+    public function edit($id){
+        return $this->_edit($id);
+    }
+
+    public function _edit($id, $data = []){
+        if($result = $this->nopower($this->powerTypes['edit']['value'])){
+            return $result;
+        }
+        $info = $this->model->find($id);
+        $data['info'] = $info;
+        return $this->view($this->viewPath.'.edit', $data);
+    }
+
+    // 更新
+    public function _update($request, $id){
+        if($result = $this->nopower($this->powerTypes['edit']['value'])){
+            return $result;
+        }
+        $model = $this->model->find($id);
+        if(false === $model->update($request->all())){
+            return $this->error();
+        }
+
+        return $this->success();
+    }
+
+    // 删除
+    public function destroy($id){
+        if($result = $this->nopower($this->powerTypes['delete']['value'])){
+            return $result;
+        }
+        if(false === $this->model->destroy($id)){
+            return $this->error();
+        }
+
+        return $this->success();
+    }
+
+    protected function nopower($power){
+        $authPower = session('authPower');
+        if(!in_array($this->powerTypes['all']['value'], $authPower) && !in_array($power, $authPower)){
+            return view('layout.nopower', ['redirectUrl'=>url('admin/home')]);
+        }
+        return false;
+    }
+
+    protected function getPowers(){
+        $powerList = [];
+        $authPower = session('authPower');
+        foreach ($this->powerTypes as $key => $item) {
+            if($key == 'all' && in_array($item['value'], $authPower)){
+                $powerList[$item['value']] = true;
+                return $powerList;
+            }
+            $powerList[$item['value']] = in_array($item['value'], $authPower);
+        }
+        return $powerList;
     }
 
     protected function view($view, $data=[]){
-    	if(Auth::user()->id == 1){
-    		$data['role'] = '超级管理员';
-    	}else{
-    		$roleNames = [];
-    		foreach (Auth::user()->roles as $role) {
-    			array_push($roleNames, $role->role_name);
-    		}
-    		$data['role'] = join('、', $roleNames);
-    	}
-    	$data['leftMenus'] = $this->leftMenus();
+        $data['authRole'] = $this->service->getAuthRoles();
+    	$data['leftMenus'] = $this->service->getLeftMenus($this->curUrl);
+        $data['curUrl'] = $this->curUrl;
+        $data['indexUrl'] = $this->indexUrl;
+        $data['title'] = $this->service->getCurMenuName();
+        $data['keyword'] = request('keyword');
+        $data['authPowers'] = $this->getPowers();
+        $data['powerTypes'] = $this->powerTypes;
+        $data['authAvatar'] = $this->service->getAuthAvatar();
+        $data['systemInfos'] = $this->service->getSystemInfos();
     	return view($view, $data);
     }
 
-    protected function leftMenus(){
-    	$menus = $this->authMenus();
-    	$cur_url = Request::path();
-    	$currentId = 0;
-    	$parentIds = [];
-    	foreach ($menus as $menu) {
-    		if(strpos($menu['menu_url'], $cur_url) !== false){
-    			$currentId = $menu['id'];
-    			$parentIds = $this->parentMenuIds($currentId, $menus);
-    		}
-    	}
-
-        $menus = $menus->toArray();
-    	$tree = new Tree($menus);
-
-    	$text_base_one   = "<li class='treeview";
-        $text_hover      = " active";
-        $text_base_two   = "'><a href='javascript:void(0);'><i class='\$menu_icon'></i><span>\$menu_name</span>
-                             <span class='pull-right-container'><i class='fa fa-angle-left pull-right'></i></span>
-                             </a><ul class='treeview-menu";
-        $text_open       = " menu-open";
-        $text_base_three = "'>";
-
-        $text_base_four = "<li";
-        $text_hover_li  = " class='active'";
-        $text_base_five = ">
-                            <a href='\$menu_url'>
-                            <i class='\$menu_icon'></i>
-                            <span>\$menu_name</span>
-                            </a>
-                         </li>";
-
-    	$tree->parentBegin = $text_base_one . $text_base_two . $text_base_three;
-    	$tree->parentActiveBegin = $text_base_one . $text_hover . $text_open . $text_base_two . $text_base_three;
-    	$tree->parentEnd = '</ul></li>';
-    	$tree->childActive = $text_base_four . $text_hover_li . $text_base_five;
-    	$tree->child = $text_base_four . $text_base_five;
-
-    	return $tree->getTree(0, $currentId, $parentIds);
+    protected function success($message=null, $url=null){
+        if($message == null){
+            $message = ErrorMessage::getMessage(ErrorMessage::OK);
+        }
+        if($url == null){
+            $url = $this->indexUrl;
+        }
+        return redirect(url($url))->with('success_message', $message);
     }
 
-    protected function parentMenuIds($curId, $menus, $parentIds = array()){
-    	if(is_array($menus)){
-    		foreach ($menus as $menu) {
-    			if($menu['id'] == $curId){
-    				if($menu['parent_id'] != 0){
-    					array_push($parentIds, $menu['parent_id']);
-    					$this->parentMenuIds($menu['parent_id'], $menus, $parentIds);
-    				}
-    			}
-    		}
-    	}
-    	return !empty($parentIds) ? $parentIds : false;
-    }
+    protected function error($message=null, $url=null){
+        if($message == null){
+            $message = ErrorMessage::getMessage(ErrorMessage::SYSTEM_ERROR);
+        }
+        if($url == null){
+            $url = url()->previous();
+        }
 
-    protected function authMenus(){
-    	if(Auth::user()->id == 1){
-    		$menus = Menu::all();
-    	}else{
-    		$roleIds = UserRole::where('user_id', Auth::user()->id)->get(['role_id']);
-    		if($roleIds->count() == 0){
-    			$roleIds = [];
-    		}
-    		$menuIds = RoleMenu::where('role_id', 'in', $roleIds)->get(['menu_id']);
-    		if($menuIds->count() == 0){
-    			$menuIds = [];
-    		}
-    		$menuIds = array_unique($menuIds);
-    		$menus = Menu::where('id', 'in', $menuIds)->select();
-    	}
-    	return $menus;
+        return redirect(url($url))->withErrors($message);
     }
 }

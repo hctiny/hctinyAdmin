@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateDoLogsTable extends Migration
+class CreateProfilesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,17 @@ class CreateDoLogsTable extends Migration
      */
     public function up()
     {
-        Schema::create('do_logs', function (Blueprint $table) {
+        Schema::create('profiles', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->string('log_title', 50);
-            $table->string('log_type', 20);
-            $table->string('log_url');
-            $table->unsignedBigInteger('log_ip');
-            $table->longText('log_data');
+            $table->string('name');
+            $table->string('tellphone')->nullable();
+            $table->string('sex')->nullable();
+            $table->string('email')->nullable();
+            $table->string('address')->nullable();
+            $table->string('avatar')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -33,6 +34,6 @@ class CreateDoLogsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('do_logs');
+        Schema::dropIfExists('profiles');
     }
 }

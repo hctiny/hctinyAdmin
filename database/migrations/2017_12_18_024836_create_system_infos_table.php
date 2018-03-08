@@ -19,6 +19,7 @@ class CreateSystemInfosTable extends Migration
             $table->string('info_value');
             $table->string('info_desc');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

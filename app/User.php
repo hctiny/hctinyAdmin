@@ -3,9 +3,12 @@
 namespace App;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable
 {
+    use SoftDeletes;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -26,5 +29,9 @@ class User extends Authenticatable
 
     public function roles(){
         return $this->belongsToMany('App\Role', 'user_roles');
+    }
+
+    public function profile(){
+        return $this->hasOne('App\Profile', 'user_id');
     }
 }

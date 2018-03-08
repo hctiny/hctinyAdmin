@@ -1,58 +1,75 @@
-<?php 
-
+<?php
 namespace App\Http\Common;
 
-Class Tree{
-	protected $list, $html;
+/**
+ * 通用的树型类
+ */
+class Tree
+{
+    protected $arr = [];
+    protected $prefixs = ['│', '├', '└'];
+    protected $nbsp = '&nbsp;&nbsp;&nbsp;';
 
-	protected $icon = array('│', '├', '└');
+    public function __construct($arr)
+    {
+        $this->arr = $arr;
+    }
 
-	public $parentBegin,$parentEnd,$parentActiveBegin,$child,$childActive;
+    public function getTree($bootId, $selected, $parentSelected = false){
+        $tree = [];
+        
+        $this->convertTree($bootId, $selected, $tree, 0, $parentSelected);
 
-	public function __construct($list){
-		$this->list = $list;
-	}
+        return $tree;
+    }
 
-	public function getTree($bootId, $currentId, $parentIds){
-		$nstr = '';
-		$child = $this->getChild($bootId);
-		if(is_array($child)){
-			foreach ($child as $item) {
-				@extract($item);
-				$id = $item['id'];
-				if($this->getChild($id)){
-					if(array_search($id, $parentIds) !== false){
-						eval("\$nstr = \"$this->parentActiveBegin\";");
-						$this->html .= $nstr;
-					}else{
-						eval("\$nstr = \"$this->parentBegin\";");
-						$this->html .= $nstr;
-					}
+    protected function convertTree($bootId, $selected, &$boots, $level, $parentSelected = false){
+        $boots = $this->getChild($bootId);
+        $hasSelected = false;
+        foreach ($boots as $key => $value) {
+            $childs = [];
+            if(($this->convertTree($value['id'], $selected, $childs, $level + 1) && $parentSelected) ||
+                (is_array($selected) ? in_array($value['id'], $selected) : $value['id'] == $selected)){
+                $hasSelected = $boots[$key]['selected'] = true;
+            }
+            $boots[$key]['child'] = $childs;
+            $boots[$key]['level'] = $level;
+        }
+        return $hasSelected;
+    }
 
-					$this->getTree($id, $currentId, $parentIds);
-					eval("\$nstr = \"$this->parentEnd\";");
-					$this->html .= $nstr;
-				}else{
-					if($id == $currentId || array_search($id, $parentIds) !== false){
-						eval("\$nstr = \"$this->childActive\";");
-						$this->html .= $nstr;
-					}else{
-						eval("\$nstr = \"$this->child\";");
-						$this->html .= $nstr;
-					}
-				}
-			}
-		}
-		return $this->html;
-	}
+    public function getSelectTree($bootId, $selected, &$arr=[], $prefix='', $level = 0){
+        $boots = $this->getChild($bootId);
+        $maxCount = count($boots);
+        $index = 1;
+        $addon = '';
+        foreach ($boots as $key => $value) {
+            $value['selected'] = ($value['id'] == $selected);
+            if($level === 0){
+                $value['prefix'] = $prefix;
+            }else{
+                if($index < $maxCount){
+                    $value['prefix'] = $prefix . $this->prefixs[1];
+                    $addon = $this->prefixs[0];
+                }else{
+                    $value['prefix'] = $prefix . $this->prefixs[2];
+                    $addon = $this->nbsp;
+                }
+            }
+            array_push($arr, $value);
+            $this->getSelectTree($value['id'], $selected, $arr, $prefix.$addon, $level + 1);
+            $index++;
+        }
+        return $arr;
+    }
 
-	public function getChild($bootId){
-		$newArr = [];
-		foreach ($this->list as $item) {
-			if($item['parent_id'] == $bootId){
-				array_push($newArr, $item);
-			}
-		}
-		return $newArr ? $newArr : false;
-	}
+    protected function getChild($bootId){
+        $child = [];
+        foreach ($this->arr as $value) {
+            if($value['parent_id'] == $bootId){
+                array_push($child, $value);
+            }
+        }
+        return $child;
+    }
 }

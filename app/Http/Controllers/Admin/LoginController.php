@@ -5,13 +5,16 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use App\Http\Common\ErrorMessage;
 
 class LoginController extends Controller
 {
+    protected $loginUrl = '/admin/login';
+    protected $homeUrl = '/admin/home';
+
 	public function __construct()
     {
         $this->middleware('guest')->except('logout');
-        $this->middleware('log');
     }
 	
 	public function index(){
@@ -22,13 +25,15 @@ class LoginController extends Controller
     	$user_name = $request->input('user_name');
     	$password = $request->input('password');
     	if(Auth::attempt(['user_name'=>$user_name, 'password'=>$password])){
-    		return redirect('admin/home');
+    		return redirect($this->homeUrl);
     	}
-    	return redirect('/admin/login')->with('message', '用户名或密码错误');
+    	return redirect($this->loginUrl)
+            ->withErrors(ErrorMessage::getMessage(ErrorMessage::NAME_OR_PASSWORD_ERROR))
+            ->withInput();
     }
 
     public function logout(){
         Auth::logout();
-        return redirect('/admin/login');
+        return redirect($this->loginUrl);
     }
 }

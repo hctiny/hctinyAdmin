@@ -16,13 +16,14 @@ class CreateMenusTable extends Migration
         Schema::create('menus', function (Blueprint $table) {
             $table->increments('id');
             $table->string('menu_name', 50);
+            $table->string('power_name', 20)->nullable();
             $table->string('menu_url');
             $table->string('menu_icon', 20);
             $table->unsignedInteger('parent_id');
             $table->unsignedInteger('sort');
             $table->unsignedTinyInteger('is_show');
-            $table->unsignedTinyInteger('log_type');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

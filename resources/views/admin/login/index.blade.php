@@ -11,6 +11,8 @@
   <link rel="stylesheet" href="{{ URL::asset('bower_components/font-awesome/css/font-awesome.min.css')}}">
   <link rel="stylesheet" href="{{ URL::asset('bower_components/adminlte/css/AdminLTE.min.css')}}">
   <link rel="stylesheet" href="{{ URL::asset('bower_components/adminlte/css/skins/_all-skins.min.css')}}">
+  <!-- jQuery 3 -->
+  <script src="{{ URL::asset('js/app.js')}}"></script>
 </head>
 <body class="hold-transition login-page">
 <div class="login-box">
@@ -22,16 +24,23 @@
     <form action="authenticate" method="post">
       {!! csrf_field() !!}
       <div class="form-group has-feedback">
-        <input type="text" class="form-control" placeholder="用户名" name="user_name">
+        <input type="text" class="form-control" placeholder="用户名" name="user_name" value="{{old('user_name')}}">
         <span class="fa fa-user form-control-feedback"></span>
       </div>
       <div class="form-group has-feedback">
-        <input type="password" class="form-control" placeholder="密码" name="password">
+        <input type="password" class="form-control" placeholder="密码" name="password" value="{{old('password')}}">
         <span class="fa fa-lock form-control-feedback"></span>
       </div>
       <div class="row">
         <!-- /.col -->
-        <div class="col-xs-4 col-xs-offset-8">
+        <div class="col-xs-8">
+          <p class="login-error">
+            @if(count($errors) > 0)
+              {{$errors->first()}}
+            @endif
+          </p>
+        </div>
+        <div class="col-xs-4">
           <button type="submit" class="btn btn-primary btn-block btn-flat">登录</button>
         </div>
         <!-- /.col -->
@@ -42,7 +51,5 @@
 </div>
 <!-- /.login-box -->
 
-<!-- jQuery 3 -->
-<script src="{{ URL::asset('js/app.js')}}"></script>
 </body>
 </html>

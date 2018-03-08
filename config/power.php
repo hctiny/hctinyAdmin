@@ -1,0 +1,32 @@
+<?php
+
+return [
+	'all'=>[
+		'name'=>'全部权限',
+		'value'=>'all'
+	],
+	'index'=>[
+		'name'=>'主页',
+		'value'=>'index'
+	],
+	'add'=>[
+		'name'=>'添加',
+		'value'=>'add'
+	],
+	'edit'=>[
+		'name'=>'编辑',
+		'value'=>'edit'
+	],
+	'delete'=>[
+		'name'=>'删除',
+		'value'=>'delete'
+	],
+	'view'=>[
+		'name'=>'展示',
+		'value'=>'view'
+	],
+	'power'=>[
+		'name'=>'权限管理',
+		'value'=>'power'
+	],
+];
