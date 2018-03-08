@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="{{ URL::asset('bower_components/font-awesome/css/font-awesome.min.css')}}">
   <link rel="stylesheet" href="{{ URL::asset('bower_components/adminlte/css/AdminLTE.min.css')}}">
   <link rel="stylesheet" href="{{ URL::asset('bower_components/adminlte/css/skins/_all-skins.min.css')}}">
+  <link rel="stylesheet" href="{{ URL::asset('css/admin.css')}}">
   <!-- jQuery 3 -->
   <script src="{{ URL::asset('js/app.js')}}"></script>
 </head>
