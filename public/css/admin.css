@@ -1,0 +1,46 @@
+.profile-user-img{
+	height: 100px;
+}
+
+.login-error{
+	color: #d73925;
+}
+
+.admin-alert{
+	z-index: 9999;
+    top:0;
+    position: absolute;
+    width: 100%;
+    margin:auto;
+    left: 0;
+    display: none;
+    border-radius: 0;
+}
+
+.box-header .box-title.admin-box-title{
+	display: block;
+}
+
+.admin-box-title>.input-group-sm{
+	width: 200px;
+}
+
+.admin-error-page{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.error-box{
+	margin: auto;
+	width: 600px;
+	text-align: center;
+}
+
+.error-box h3{
+	margin-top: 0;
+}
+
+.error-box p{
+	margin-bottom: 0;
+}
