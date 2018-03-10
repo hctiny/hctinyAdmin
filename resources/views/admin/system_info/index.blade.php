@@ -4,7 +4,7 @@
 	@parent
 	<section class="content">
 		<div class="box box-primary">
-		  <form method="post" action="/admin/menu">
+		  <form method="post" action="">
         <div class="box-body">
           {!! csrf_field() !!}
           @foreach($datas as $item)

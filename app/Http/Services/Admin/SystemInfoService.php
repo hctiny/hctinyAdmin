@@ -17,9 +17,11 @@ class SystemInfoService extends CommonService{
             DB::transaction(function() use ($request) {
                 foreach ($request->all() as $key => $value) {
                     $info = SystemInfo::where('info_name', $key)->first();
-                    $info->info_value = $value;
-                    if(false === $info->save()){
-                        throw new Exception(ErrorMessage::getMessage(ErrorMessage::SYSTEM_ERROR), ErrorMessage::SYSTEM_ERROR);
+                    if($info){
+                        $info->info_value = $value;
+                        if(false === $info->save()){
+                            throw new Exception(ErrorMessage::getMessage(ErrorMessage::SYSTEM_ERROR), ErrorMessage::SYSTEM_ERROR);
+                        }
                     }
                 }
             });
