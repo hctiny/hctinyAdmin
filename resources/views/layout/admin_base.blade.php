@@ -112,7 +112,7 @@
   </div>
   <!-- /.content-wrapper -->
   <footer class="main-footer">
-    <strong>Copyright &copy; {{ $systemInfos['right_time'] }} {{ $systemInfos['company_name'] }}</strong> 技术支持 <a>杭州派兹坊网络科技有限公司</a> {{ $systemInfos['icp_number'] }}
+    <strong>Copyright &copy; {{ $systemInfos['right_time'] }} {{ $systemInfos['owner'] }}</strong> 技术支持 <a>杭州派兹坊网络科技有限公司</a> {{ $systemInfos['icp_number'] }}
   </footer>
 </div>
 <!-- ./wrapper -->

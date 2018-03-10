@@ -45,10 +45,9 @@ class SystemInfosTableSeeder extends Seeder
     public function run()
     {
         DB::table('system_infos')->delete();
-        SystemInfo::create(['id'=>1,'info_name'=>'company_name','info_value'=>'杭州派兹坊网络科技有限公司', 'info_desc'=>'公司名称']);
+        SystemInfo::create(['id'=>1,'info_name'=>'owner','info_value'=>'杭州派兹坊网络科技有限公司', 'info_desc'=>'所有者']);
         SystemInfo::create(['id'=>2,'info_name'=>'icp_number','info_value'=>'', 'info_desc'=>'备案号']);
         SystemInfo::create(['id'=>3,'info_name'=>'right_time','info_value'=>'2014-2018', 'info_desc'=>'版权时间']);
-        SystemInfo::create(['id'=>4,'info_name'=>'index_seo','info_value'=>'', 'info_desc'=>'首页关键字']);
     }
 }
 
