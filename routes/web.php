@@ -10,6 +10,9 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::get('/test', function(){
+    return view('test');
+});
 
 Route::get('/admin/login', ['as'=>'login','uses'=>'Admin\LoginController@index']);
 Route::post('/admin/authenticate', 'Admin\LoginController@authenticate');
@@ -47,3 +50,10 @@ Route::get('/admin/user/{id}', 'Admin\UserController@edit');
 Route::post('/admin/user', 'Admin\UserController@store');
 Route::put('/admin/user/{id}', 'Admin\UserController@update');
 Route::delete('/admin/user/{id}', 'Admin\UserController@destroy');
+
+Route::get('/admin/app', 'Admin\AppController@index');
+Route::get('/admin/app/create', 'Admin\AppController@create');
+Route::get('/admin/app/{id}', 'Admin\AppController@edit');
+Route::post('/admin/app', 'Admin\AppController@store');
+Route::put('/admin/app/{id}', 'Admin\AppController@update');
+Route::delete('/admin/app/{id}', 'Admin\AppController@destroy');

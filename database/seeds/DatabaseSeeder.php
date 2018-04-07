@@ -91,7 +91,16 @@ class MenusTableSeeder extends Seeder
             'menu_icon'=>'fa fa-circle-o', 'parent_id'=>12, 'sort'=>999, 'is_show'=>0]);
         Menu::create(['id'=>15,'menu_name'=>'删除菜单', 'power_name'=>'delete', 'menu_url'=>'/admin/menu/{id}/delete', 
             'menu_icon'=>'fa fa-circle-o', 'parent_id'=>12, 'sort'=>999, 'is_show'=>0]);
-        Menu::create(['id'=>16,'menu_name'=>'系统信息', 'power_name'=>'index', 'menu_url'=>'/admin/system_info', 
+        Menu::create(['id'=>16,'menu_name'=>'应用管理', 'power_name'=>'index', 'menu_url'=>'/admin/app', 
+            'menu_icon'=>'fa fa-thumb-tack', 'parent_id'=>11, 'sort'=>999, 'is_show'=>1]);
+        Menu::create(['id'=>17,'menu_name'=>'添加应用', 'power_name'=>'add', 'menu_url'=>'/admin/app/create', 
+            'menu_icon'=>'fa fa-circle-o', 'parent_id'=>16, 'sort'=>999, 'is_show'=>0]);
+        Menu::create(['id'=>18,'menu_name'=>'编辑应用', 'power_name'=>'edit', 'menu_url'=>'/admin/app/{id}', 
+            'menu_icon'=>'fa fa-circle-o', 'parent_id'=>16, 'sort'=>999, 'is_show'=>0]);
+        Menu::create(['id'=>19,'menu_name'=>'删除应用', 'power_name'=>'delete', 'menu_url'=>'/admin/app/{id}/delete', 
+            'menu_icon'=>'fa fa-circle-o', 'parent_id'=>16, 'sort'=>999, 'is_show'=>0]);
+        Menu::create(['id'=>20,'menu_name'=>'系统信息', 'power_name'=>'index', 'menu_url'=>'/admin/system_info', 
             'menu_icon'=>'fa fa-info-circle', 'parent_id'=>11, 'sort'=>999, 'is_show'=>1]);
+        
     }
 }
