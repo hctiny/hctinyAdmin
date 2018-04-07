@@ -27,7 +27,7 @@ class Error
         '1006' => '[sign]缺失',
         '1007' => '[sign]签名错误',
         '1008' => '[method]方法不存在',
-        '1009' => 'run方法不存在，请联系管理员',
+        '1009' => '%s 模块下不存在 %s 方法',
         '1010' => '[nonce]缺失',
         '1011' => '[nonce]必须为字符串',
         '1012' => '[nonce]长度必须为1-32位',
@@ -37,13 +37,22 @@ class Error
      * 返回错误码
      * @var string
      */
-    public static function getError($code = '400', $_ = false)
+    public static function getError($code = '400', $_ = false, $param = null)
     {
         if (! isset(self::$errCodes[$code])) {
             $code = '400';
         }
 
+        $errMsg = self::$errCodes[$code];
+        if($param){
+            switch($code){
+                case '1009':
+                    $errMsg = sprintf($errMsg, $param[0], $param[1]);
+                    break;
+            }
+        }
+
         return ($_ ? "[{$code}]" : '')
-            . self::$errCodes[$code];
+            . $errMsg;
     }
 }
