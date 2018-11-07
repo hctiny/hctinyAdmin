@@ -28,7 +28,7 @@ class Tree
         $hasSelected = false;
         foreach ($boots as $key => $value) {
             $childs = [];
-            if(($this->convertTree($value['id'], $selected, $childs, $level + 1) && $parentSelected) ||
+            if(($this->convertTree($value['id'], $selected, $childs, $level + 1, $parentSelected) && $parentSelected) ||
                 (is_array($selected) ? in_array($value['id'], $selected) : $value['id'] == $selected)){
                 $hasSelected = $boots[$key]['selected'] = true;
             }
