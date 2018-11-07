@@ -116,30 +116,25 @@ class Server
         }
 
         // D. 校验接口名
-        // D.1 通过方法名获取类名和方法名
-        $classMethod = self::getClassName($this->method);
-        if(!$classMethod){
-            return $this->response(['status' => false, 'code' => '1008']);
-        }
-        $className = $classMethod['className'];
+        // D.1 通过方法名获取类名
+        $className = self::getClassName($this->method);
 
         // D.2 判断类名是否存在
         $classPath = __NAMESPACE__ . '\\Response\\' . $className;
-        if (!class_exists($classPath)) {
+        if (!$className || !class_exists($classPath)) {
             return $this->response(['status' => false, 'code' => '1008']);
         }
 
         // D.3 判断方法是否存在
-        $methodName = $classMethod['methodName'];
-        if (! method_exists($classPath, $methodName)) {
-            return $this->response(['status' => false, 'code' => '1009', 'param' => [$className, $methodName]]);
+        if (! method_exists($classPath, 'run')) {
+            return $this->response(['status' => false, 'code' => '1009']);
         }
 
         $this->classname = $classPath;
 
         // E. api接口分发
         $class = new $classPath;
-        return $this->response((array) $class->$methodName($this->params));
+        return $this->response((array) $class->run($this->params));
     }
 
     /**
@@ -197,7 +192,7 @@ class Server
 
     /**
      * 通过方法名转换为对应的类名
-     * @param  string $method 方法名  model_name.class_name.method_name 转换成ModelName\ClassName, methodName
+     * @param  string $method 方法名
      * @return string|false         
      */
     protected function getClassName($method)
@@ -208,35 +203,12 @@ class Server
             return false;
 
         $tmp = array();
-        $methodsCount = count($methods);
-        $methodName = '';
-        foreach ($methods as $key=>$value) {
-            $value = $this->convertToHump($value);
-            if($key != $methodsCount - 1){
-                $tmp[] = ucwords($value);
-            }else{
-                $methodName = $value;
-            }
+        foreach ($methods as $value) {
+            $tmp[] = ucwords($value);
         }
 
-        $className = implode('\\', $tmp);
-        return [
-            "className" => $className,
-            "methodName" => $methodName
-        ];
-    }
-
-    protected function convertToHump($methodName){
-        $methodWords = explode('_', $methodName);
-        $tmp = array();
-        foreach($methodWords as $k=>$v){
-            if($v > 0){
-                $v = ucwords($v);
-            }
-            $tmp[] = $v;
-        }
-        $newMethodName = implode('', $tmp);
-        return $newMethodName;
+        $className = implode('', $tmp);
+        return $className;
     }
 
     /**
@@ -246,14 +218,8 @@ class Server
      */
     protected function response(array $result)
     {
-        $param = null;
-        if(isset($result['param'])){
-            $param = $result['param'];
-            unset($result['param']);
-        }
         if (! array_key_exists('msg', $result) && array_key_exists('code', $result)) {
-            
-            $result['msg'] = $this->getError($result['code'], $param);
+            $result['msg'] = $this->getError($result['code']);
         }
 
         if ($this->format == 'json') {
@@ -268,8 +234,8 @@ class Server
      * @param  string $code 错误码
      * @return string       
      */
-    protected function getError($code, $param)
+    protected function getError($code)
     {
-        return $this->error->getError($code, $this->error_code_show, $param);
+        return $this->error->getError($code, $this->error_code_show);
     }
 }

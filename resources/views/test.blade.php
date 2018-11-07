@@ -19,6 +19,6 @@
     <script type="text/javascript" src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
     <script src="{{ URL::asset('js/common.js')}}"></script>
     <script>
-        $.commonAjax('demo.index');
+        $.commonAjax('demo');
     </script>
 </html>
