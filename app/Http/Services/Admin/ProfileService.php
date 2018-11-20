@@ -20,7 +20,7 @@ class ProfileService extends CommonService{
 
     public function resetPassword($request){
         $user = Auth::user();
-        if($user->password == $request->password_old){
+        if(password_verify($request->password_old, $user->password)){
             $user->password = bcrypt($request->password_new);
 
             return $user->save();
