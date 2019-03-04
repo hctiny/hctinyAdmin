@@ -1,0 +1,46 @@
+<?php
+
+namespace DummyNamespace;
+
+use Illuminate\Http\Request;
+use DummyRootNamespaceHttp\Requests\Admin\DummyModelRequest;
+use DummyRootNamespaceHttp\Services\Admin\DummyModelService;
+
+use DummyFullModel;
+
+class DummyClass extends BaseController
+{
+    protected $indexUrl = 'admin/DummyViewModel';
+    protected $viewPath = 'admin.DummyViewModel';
+
+	public function __construct(DummyModelService $service, DummyModel $model)
+    {
+    	parent::__construct($service);
+        $this->model = $model;
+    }
+
+    // 首页
+    public function index(Request $request){
+
+    }
+
+    // 新建
+    public function create(){
+        return $this->_create([]);
+    }
+
+    // 编辑
+    public function edit($id){
+        return $this->_edit($id, []);
+    }
+
+    // 存储
+    public function store(DummyModelRequest $request){
+        return $this->_store($request);
+    }
+
+    // 更新
+    public function update(DummyModelRequest $request, $id){
+        return $this->_update($request, $id);
+    }
+}

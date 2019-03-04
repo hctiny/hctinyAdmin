@@ -1,0 +1,19 @@
+<?php
+
+namespace DummyNamespace;
+
+use DummyFullModel;
+
+class DummyClass extends CommonService{
+	public function getIndexDatas($keyword = null, $type = null){
+        
+    }
+    
+    public function store($request){
+        
+    }
+
+    public function update($request, $id){
+        
+    }
+}
